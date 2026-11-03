@@ -1,0 +1,4289 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.10">
+ <model name="mujoco_uav_delta">
+  <static>false</static>
+  <!-- Self broadphase is enabled only with SelectiveDeltaCollisionSystem.
+       The system suppresses UAV/UAV and all internal Delta/helper pairs. -->
+  <self_collide>true</self_collide>
+  <plugin filename="libSelectiveDeltaCollisionSystem.so" name="SelectiveDeltaCollisionSystem"/>
+  <!-- motorConstant preserves the previous 9.75 N per-rotor maximum at
+       1000 rad/s. Motor time constants remain provisional estimates. -->
+  <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+   <jointName>rotor_0_joint</jointName>
+   <linkName>uav_uav_prop_1</linkName>
+   <turningDirection>ccw</turningDirection>
+   <timeConstantUp>0.0125</timeConstantUp>
+   <timeConstantDown>0.025</timeConstantDown>
+   <maxRotVelocity>1000.0</maxRotVelocity>
+   <motorConstant>9.75e-6</motorConstant>
+   <momentConstant>0.0230666667</momentConstant>
+   <commandSubTopic>command/motor_speed</commandSubTopic>
+   <motorNumber>0</motorNumber>
+   <rotorDragCoefficient>0</rotorDragCoefficient>
+   <rollingMomentCoefficient>0</rollingMomentCoefficient>
+   <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+   <motorType>velocity</motorType>
+  </plugin>
+  <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+   <jointName>rotor_1_joint</jointName>
+   <linkName>uav_uav_prop_3</linkName>
+   <turningDirection>ccw</turningDirection>
+   <timeConstantUp>0.0125</timeConstantUp>
+   <timeConstantDown>0.025</timeConstantDown>
+   <maxRotVelocity>1000.0</maxRotVelocity>
+   <motorConstant>9.75e-6</motorConstant>
+   <momentConstant>0.0230666667</momentConstant>
+   <commandSubTopic>command/motor_speed</commandSubTopic>
+   <motorNumber>1</motorNumber>
+   <rotorDragCoefficient>0</rotorDragCoefficient>
+   <rollingMomentCoefficient>0</rollingMomentCoefficient>
+   <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+   <motorType>velocity</motorType>
+  </plugin>
+  <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+   <jointName>rotor_2_joint</jointName>
+   <linkName>uav_uav_prop_4</linkName>
+   <turningDirection>cw</turningDirection>
+   <timeConstantUp>0.0125</timeConstantUp>
+   <timeConstantDown>0.025</timeConstantDown>
+   <maxRotVelocity>1000.0</maxRotVelocity>
+   <motorConstant>9.75e-6</motorConstant>
+   <momentConstant>0.0230666667</momentConstant>
+   <commandSubTopic>command/motor_speed</commandSubTopic>
+   <motorNumber>2</motorNumber>
+   <rotorDragCoefficient>0</rotorDragCoefficient>
+   <rollingMomentCoefficient>0</rollingMomentCoefficient>
+   <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+   <motorType>velocity</motorType>
+  </plugin>
+  <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+   <jointName>rotor_3_joint</jointName>
+   <linkName>uav_uav_prop_2</linkName>
+   <turningDirection>cw</turningDirection>
+   <timeConstantUp>0.0125</timeConstantUp>
+   <timeConstantDown>0.025</timeConstantDown>
+   <maxRotVelocity>1000.0</maxRotVelocity>
+   <motorConstant>9.75e-6</motorConstant>
+   <momentConstant>0.0230666667</momentConstant>
+   <commandSubTopic>command/motor_speed</commandSubTopic>
+   <motorNumber>3</motorNumber>
+   <rotorDragCoefficient>0</rotorDragCoefficient>
+   <rollingMomentCoefficient>0</rollingMomentCoefficient>
+   <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+   <motorType>velocity</motorType>
+  </plugin>
+  <frame name="delta_mount" attached_to="base_link">
+   <pose relative_to="base_link">0 0 -0.1071 0 0 0</pose>
+  </frame>
+  <link name="base_link">
+   <pose>0 0 0.1071 0 0 0</pose>
+   <sensor name="imu_sensor" type="imu">
+    <gz_frame_id>base_link</gz_frame_id>
+    <always_on>1</always_on>
+    <update_rate>500</update_rate>
+    <imu>
+     <angular_velocity>
+      <x>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.0008726646</stddev>
+       </noise>
+      </x>
+      <y>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.0008726646</stddev>
+       </noise>
+      </y>
+      <z>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.0008726646</stddev>
+       </noise>
+      </z>
+     </angular_velocity>
+     <linear_acceleration>
+      <x>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.00637</stddev>
+       </noise>
+      </x>
+      <y>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.00637</stddev>
+       </noise>
+      </y>
+      <z>
+       <noise type="gaussian">
+        <mean>0</mean>
+        <stddev>0.00686</stddev>
+       </noise>
+      </z>
+     </linear_acceleration>
+    </imu>
+   </sensor>
+   <sensor name="magnetometer_sensor" type="magnetometer">
+    <gz_frame_id>base_link</gz_frame_id>
+    <always_on>1</always_on>
+    <update_rate>100</update_rate>
+    <magnetometer>
+     <x>
+      <noise type="gaussian">
+       <mean>0</mean>
+       <stddev>0.0001</stddev>
+      </noise>
+     </x>
+     <y>
+      <noise type="gaussian">
+       <mean>0</mean>
+       <stddev>0.0001</stddev>
+      </noise>
+     </y>
+     <z>
+      <noise type="gaussian">
+       <mean>0</mean>
+       <stddev>0.0001</stddev>
+      </noise>
+     </z>
+    </magnetometer>
+   </sensor>
+   <sensor name="air_pressure_sensor" type="air_pressure">
+    <gz_frame_id>base_link</gz_frame_id>
+    <always_on>1</always_on>
+    <update_rate>50</update_rate>
+    <air_pressure>
+     <pressure>
+      <noise type="gaussian">
+       <mean>0</mean>
+       <stddev>3</stddev>
+      </noise>
+     </pressure>
+    </air_pressure>
+   </sensor>
+   <sensor name="navsat_sensor" type="navsat">
+    <gz_frame_id>base_link</gz_frame_id>
+    <always_on>1</always_on>
+    <update_rate>30</update_rate>
+   </sensor>
+   <inertial>
+    <mass>1e-9</mass>
+    <inertia>
+     <ixx>1e-12</ixx>
+     <iyy>1e-12</iyy>
+     <izz>1e-12</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+  </link>
+  <frame name="rotor0" attached_to="base_link">
+   <pose relative_to="base_link">0.1414 -0.1414 -0.0152 0 0 0</pose>
+  </frame>
+  <frame name="rotor1" attached_to="base_link">
+   <pose relative_to="base_link">-0.1414 0.1414 -0.0152 0 0 0</pose>
+  </frame>
+  <frame name="rotor2" attached_to="base_link">
+   <pose relative_to="base_link">0.1414 0.1414 -0.0152 0 0 0</pose>
+  </frame>
+  <frame name="rotor3" attached_to="base_link">
+   <pose relative_to="base_link">-0.1414 -0.1414 -0.0152 0 0 0</pose>
+  </frame>
+  <joint name="uav_to_delta_mount" type="fixed">
+   <parent>base_link</parent>
+   <child>delta_base</child>
+   <pose>0 0 -0.1071 0 0 0</pose>
+  </joint>
+  <link name="uav_uav_11000mah_battery_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0 0 -0.0718700010329 0 0 0</pose>
+    <mass>0.679630667702833</mass>
+    <inertia>
+     <ixx>0.00181625625921158</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.000400359119224725</iyy>
+     <iyz>0</iyz>
+     <izz>0.0020530509415947</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_11000mah_battery_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 11000mAh_battery-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_11000mah_battery_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 11000mAh_battery-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+   <!-- Exact axis-aligned bounds of UAV - 11000mAh_battery-1.STL. DART's
+        triangle-mesh pair is unreliable for this internal load path. -->
+   <collision name="uav_battery_underside_box_collision">
+    <pose>0 0 -0.07187 0 0 0</pose>
+    <geometry><box><size>0.075 0.175 0.038</size></box></geometry>
+    <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_11000mah_battery_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_11000mah_battery_1</child>
+  </joint>
+  <link name="uav_uav_7nano_base_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-5.27279661327e-18 -6.97830413709e-08 -0.0133699998349 0 0 0</pose>
+    <mass>0.00187968432623503</mass>
+    <inertia>
+     <ixx>2.55089272877826e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.7407574034661e-07</iyy>
+     <iyz>0</iyz>
+     <izz>4.28873637517467e-07</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_7nano_base_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 7Nano_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_7nano_base_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 7Nano_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_7nano_base_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_7nano_base_1</child>
+  </joint>
+  <link name="uav_uav_7nano_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0 8.07951082663e-05 7.85187197673e-05 0 0 0</pose>
+    <mass>0.0353503707713143</mass>
+    <inertia>
+     <ixx>4.91847681635523e-06</ixx>
+     <ixy>2.50528792466297e-24</ixy>
+     <ixz>-1.60743953410097e-22</ixz>
+     <iyy>4.73739432666218e-06</iyy>
+     <iyz>-1.64384287412944e-08</iyz>
+     <izz>5.79185842109976e-06</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_7nano_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 7NANO-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_7nano_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - 7NANO-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_7nano_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_7nano_1</child>
+  </joint>
+  <link name="uav_uav_cushion_pcb_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0152500001043 -0.0152500001043 -0.0338203292733 0 0 0</pose>
+    <mass>0.000338356939216249</mass>
+    <inertia>
+     <ixx>2.27746186084766e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.27746186084766e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.36460987178391e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_cushion_pcb_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_cushion_pcb_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_cushion_pcb_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_cushion_pcb_1</child>
+  </joint>
+  <link name="uav_uav_cushion_pcb_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0152500001043 0.0152500001043 -0.0338203292733 0 0 0</pose>
+    <mass>0.000338356939216248</mass>
+    <inertia>
+     <ixx>2.27746186084766e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.27746186084766e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.3646098717839e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_cushion_pcb_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_cushion_pcb_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_cushion_pcb_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_cushion_pcb_2</child>
+  </joint>
+  <link name="uav_uav_cushion_pcb_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0152500001043 0.0152500001043 -0.0338203292733 0 0 0</pose>
+    <mass>0.000338356939216248</mass>
+    <inertia>
+     <ixx>2.27746186084766e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.27746186084766e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.3646098717839e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_cushion_pcb_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_cushion_pcb_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_cushion_pcb_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_cushion_pcb_3</child>
+  </joint>
+  <link name="uav_uav_cushion_pcb_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0152500001043 -0.0152500001043 -0.0338203292733 0 0 0</pose>
+    <mass>0.000338356939216249</mass>
+    <inertia>
+     <ixx>2.27746186084766e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.27746186084766e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.36460987178391e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_cushion_pcb_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_cushion_pcb_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Cushion_PCB-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_cushion_pcb_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_cushion_pcb_4</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.130814754646 -0.116672621685 -0.0308700005688 0 0 0</pose>
+    <mass>0.000283255764857505</mass>
+    <inertia>
+     <ixx>2.45378608480457e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>1.16729963786563e-15</ixz>
+     <iyy>2.4537883724926e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347387679735e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_1</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_10">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.130814757727 0.116672618642 -0.0308700005708 0 0 0</pose>
+    <mass>0.000283255776503678</mass>
+    <inertia>
+     <ixx>2.453787283337e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378703878761e-09</iyy>
+     <iyz>-1.17165140945224e-15</iyz>
+     <izz>8.53347421324e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_10_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-10.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_10_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-10.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_10" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_10</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_11">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0834386030688 0.0933380953776 -0.0308700005743 0 0 0</pose>
+    <mass>0.000283255768061219</mass>
+    <inertia>
+     <ixx>2.4537874793383e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378615689204e-09</iyy>
+     <iyz>-1.16919874211768e-15</iyz>
+     <izz>8.53347319056655e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_11_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-11.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_11_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-11.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_11" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_11</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_12">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0933380984383 0.0834385999869 -0.0308700005794 0 0 0</pose>
+    <mass>0.000283255758201562</mass>
+    <inertia>
+     <ixx>2.45378742457882e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378631802865e-09</iyy>
+     <iyz>-1.17104317887877e-15</iyz>
+     <izz>8.53347290650141e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_12_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-12.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_12_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-12.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_12" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_12</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_13">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0530330118227 0.0530330087488 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255646471966</mass>
+    <inertia>
+     <ixx>2.45378636360322e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378513409332e-09</iyy>
+     <iyz>-1.1705802584739e-15</iyz>
+     <izz>8.53346628032061e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_13_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-13.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_13_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-13.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_13" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_13</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_14">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0275771675292 0.0530330087488 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255676659435</mass>
+    <inertia>
+     <ixx>2.45378653199838e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378550305756e-09</iyy>
+     <iyz>-1.17067666823024e-15</iyz>
+     <izz>8.5334679728749e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_14_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-14.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_14_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-14.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_14" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_14</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_15">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0530330118301 0.0275771644736 -0.0308700005761 0 0 0</pose>
+    <mass>0.000283255675459133</mass>
+    <inertia>
+     <ixx>2.45378673927355e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378531087932e-09</iyy>
+     <iyz>-1.16952625596499e-15</iyz>
+     <izz>8.53346793780347e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_15_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-15.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_15_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-15.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_15" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_15</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_16">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.156977708751 0.156977705638 -0.0308700005769 0 0 0</pose>
+    <mass>0.00028325555076473</mass>
+    <inertia>
+     <ixx>2.45378577808431e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378452611972e-09</iyy>
+     <iyz>-1.16695428505972e-15</iyz>
+     <izz>8.53346128102743e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_16_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-16.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_16_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-16.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_16" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_16</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_17">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.130814754646 0.116672621685 -0.0308700005688 0 0 0</pose>
+    <mass>0.000283255764857505</mass>
+    <inertia>
+     <ixx>2.45378608480457e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>-1.16729963786563e-15</ixz>
+     <iyy>2.4537883724926e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347387679735e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_17_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-17.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_17_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-17.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_17" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_17</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_18">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.116672618642 0.130814757727 -0.0308700005708 0 0 0</pose>
+    <mass>0.000283255776503678</mass>
+    <inertia>
+     <ixx>2.45378703878761e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>-1.17165140945224e-15</ixz>
+     <iyy>2.453787283337e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347421324e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_18_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-18.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_18_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-18.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_18" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_18</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_19">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0933380953776 0.0834386030688 -0.0308700005743 0 0 0</pose>
+    <mass>0.000283255768061219</mass>
+    <inertia>
+     <ixx>2.45378615689205e-09</ixx>
+     <ixy>-1.36212567854915e-25</ixy>
+     <ixz>-1.16919874211768e-15</ixz>
+     <iyy>2.4537874793383e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347319056657e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_19_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-19.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_19_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-19.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_19" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_19</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.116672618642 -0.130814757727 -0.0308700005708 0 0 0</pose>
+    <mass>0.000283255776503678</mass>
+    <inertia>
+     <ixx>2.45378703878761e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>1.17165140945224e-15</ixz>
+     <iyy>2.453787283337e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347421324e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_2</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_20">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0834385999869 0.0933380984383 -0.0308700005794 0 0 0</pose>
+    <mass>0.000283255758201562</mass>
+    <inertia>
+     <ixx>2.45378631802865e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>-1.17104317887877e-15</ixz>
+     <iyy>2.45378742457882e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347290650143e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_20_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-20.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_20_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-20.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_20" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_20</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_21">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0530330087488 0.0530330118227 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255646471966</mass>
+    <inertia>
+     <ixx>2.45378513409333e-09</ixx>
+     <ixy>-1.36212505919177e-25</ixy>
+     <ixz>-1.1705802584739e-15</ixz>
+     <iyy>2.45378636360323e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346628032063e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_21_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-21.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_21_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-21.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_21" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_21</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_22">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0530330087488 0.0275771675292 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255676659435</mass>
+    <inertia>
+     <ixx>2.45378550305757e-09</ixx>
+     <ixy>-1.36212515266986e-25</ixy>
+     <ixz>-1.17067666823025e-15</ixz>
+     <iyy>2.45378653199839e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346797287492e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_22_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-22.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_22_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-22.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_22" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_22</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_23">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0275771644736 0.0530330118301 -0.0308700005761 0 0 0</pose>
+    <mass>0.000283255675459133</mass>
+    <inertia>
+     <ixx>2.45378531087932e-09</ixx>
+     <ixy>1.36212526773069e-25</ixy>
+     <ixz>-1.16952625596499e-15</ixz>
+     <iyy>2.45378673927356e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.5334679378035e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_23_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-23.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_23_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-23.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_23" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_23</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_24">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.156977705638 0.156977708751 -0.0308700005769 0 0 0</pose>
+    <mass>0.00028325555076473</mass>
+    <inertia>
+     <ixx>2.45378452611973e-09</ixx>
+     <ixy>1.36212473416348e-25</ixy>
+     <ixz>-1.16695428505972e-15</ixz>
+     <iyy>2.45378577808431e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346128102746e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_24_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-24.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_24_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-24.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_24" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_24</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_25">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.116672621685 -0.130814754646 -0.0308700005688 0 0 0</pose>
+    <mass>0.000283255764857505</mass>
+    <inertia>
+     <ixx>2.4537883724926e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378608480456e-09</iyy>
+     <iyz>1.16729963786563e-15</iyz>
+     <izz>8.53347387679733e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_25_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-25.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_25_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-25.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_25" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_25</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_26">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.130814757727 -0.116672618642 -0.0308700005708 0 0 0</pose>
+    <mass>0.000283255776503678</mass>
+    <inertia>
+     <ixx>2.453787283337e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378703878761e-09</iyy>
+     <iyz>1.17165140945224e-15</iyz>
+     <izz>8.53347421324e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_26_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-26.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_26_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-26.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_26" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_26</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_27">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0834386030688 -0.0933380953776 -0.0308700005743 0 0 0</pose>
+    <mass>0.000283255768061219</mass>
+    <inertia>
+     <ixx>2.4537874793383e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378615689204e-09</iyy>
+     <iyz>1.16919874211768e-15</iyz>
+     <izz>8.53347319056655e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_27_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-27.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_27_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-27.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_27" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_27</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_28">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0933380984383 -0.0834385999869 -0.0308700005794 0 0 0</pose>
+    <mass>0.000283255758201562</mass>
+    <inertia>
+     <ixx>2.45378742457882e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378631802865e-09</iyy>
+     <iyz>1.17104317887877e-15</iyz>
+     <izz>8.53347290650141e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_28_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-28.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_28_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-28.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_28" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_28</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_29">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0530330118227 -0.0530330087488 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255646471966</mass>
+    <inertia>
+     <ixx>2.45378636360322e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378513409332e-09</iyy>
+     <iyz>1.1705802584739e-15</iyz>
+     <izz>8.53346628032061e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_29_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-29.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_29_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-29.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_29" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_29</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0933380953776 -0.0834386030688 -0.0308700005743 0 0 0</pose>
+    <mass>0.000283255768061219</mass>
+    <inertia>
+     <ixx>2.45378615689205e-09</ixx>
+     <ixy>-1.36212567854915e-25</ixy>
+     <ixz>1.16919874211768e-15</ixz>
+     <iyy>2.4537874793383e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347319056657e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_3</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_30">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0275771675292 -0.0530330087488 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255676659435</mass>
+    <inertia>
+     <ixx>2.45378653199838e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378550305756e-09</iyy>
+     <iyz>1.17067666823024e-15</iyz>
+     <izz>8.5334679728749e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_30_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-30.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_30_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-30.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_30" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_30</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_31">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0530330118301 -0.0275771644736 -0.0308700005761 0 0 0</pose>
+    <mass>0.000283255675459133</mass>
+    <inertia>
+     <ixx>2.45378673927355e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378531087932e-09</iyy>
+     <iyz>1.16952625596499e-15</iyz>
+     <izz>8.53346793780347e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_31_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-31.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_31_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-31.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_31" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_31</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_32">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.156977708751 -0.156977705638 -0.0308700005769 0 0 0</pose>
+    <mass>0.00028325555076473</mass>
+    <inertia>
+     <ixx>2.45378577808431e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378452611972e-09</iyy>
+     <iyz>1.16695428505972e-15</iyz>
+     <izz>8.53346128102743e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_32_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-32.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_32_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-32.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_32" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_32</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0834385999869 -0.0933380984383 -0.0308700005794 0 0 0</pose>
+    <mass>0.000283255758201562</mass>
+    <inertia>
+     <ixx>2.45378631802865e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>1.17104317887877e-15</ixz>
+     <iyy>2.45378742457882e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53347290650143e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_4</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_5">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0530330087488 -0.0530330118227 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255646471966</mass>
+    <inertia>
+     <ixx>2.45378513409333e-09</ixx>
+     <ixy>-1.36212505919177e-25</ixy>
+     <ixz>1.1705802584739e-15</ixz>
+     <iyy>2.45378636360323e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346628032063e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_5_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-5.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_5_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-5.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_5" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_5</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_6">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0530330087488 -0.0275771675292 -0.0308700005749 0 0 0</pose>
+    <mass>0.000283255676659435</mass>
+    <inertia>
+     <ixx>2.45378550305757e-09</ixx>
+     <ixy>-1.36212515266986e-25</ixy>
+     <ixz>1.17067666823025e-15</ixz>
+     <iyy>2.45378653199839e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346797287492e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_6_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-6.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_6_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-6.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_6" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_6</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_7">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0275771644736 -0.0530330118301 -0.0308700005761 0 0 0</pose>
+    <mass>0.000283255675459133</mass>
+    <inertia>
+     <ixx>2.45378531087932e-09</ixx>
+     <ixy>1.36212526773069e-25</ixy>
+     <ixz>1.16952625596499e-15</ixz>
+     <iyy>2.45378673927356e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.5334679378035e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_7_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-7.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_7_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-7.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_7" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_7</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_8">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.156977705638 -0.156977708751 -0.0308700005769 0 0 0</pose>
+    <mass>0.00028325555076473</mass>
+    <inertia>
+     <ixx>2.45378452611973e-09</ixx>
+     <ixy>1.36212473416348e-25</ixy>
+     <ixz>1.16695428505972e-15</ixz>
+     <iyy>2.45378577808431e-09</iyy>
+     <iyz>0</iyz>
+     <izz>8.53346128102746e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_8_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-8.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_8_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-8.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_8" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_8</child>
+  </joint>
+  <link name="uav_uav_d5l10alsupport_9">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.116672621685 0.130814754646 -0.0308700005688 0 0 0</pose>
+    <mass>0.000283255764857505</mass>
+    <inertia>
+     <ixx>2.4537883724926e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.45378608480456e-09</iyy>
+     <iyz>-1.16729963786563e-15</iyz>
+     <izz>8.53347387679733e-10</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l10alsupport_9_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-9.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l10alsupport_9_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L10Alsupport-9.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l10alsupport_9" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l10alsupport_9</child>
+  </joint>
+  <link name="uav_uav_d5l40alsupport_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0275771646112 0.0275771645816 -0.00187628672609 0 0 0</pose>
+    <mass>0.00121022852914556</mass>
+    <inertia>
+     <ixx>1.26866121237832e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.26866121410272e-07</iyy>
+     <iyz>0</iyz>
+     <izz>3.6655356512452e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l40alsupport_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l40alsupport_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l40alsupport_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l40alsupport_1</child>
+  </joint>
+  <link name="uav_uav_d5l40alsupport_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0275771645816 -0.0275771646112 -0.00187628672609 0 0 0</pose>
+    <mass>0.00121022852914556</mass>
+    <inertia>
+     <ixx>1.26866121410272e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.26866121237832e-07</iyy>
+     <iyz>0</iyz>
+     <izz>3.6655356512452e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l40alsupport_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l40alsupport_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l40alsupport_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l40alsupport_2</child>
+  </joint>
+  <link name="uav_uav_d5l40alsupport_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0275771646112 -0.0275771645816 -0.00187628672609 0 0 0</pose>
+    <mass>0.00121022852914556</mass>
+    <inertia>
+     <ixx>1.26866121237832e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.26866121410272e-07</iyy>
+     <iyz>0</iyz>
+     <izz>3.6655356512452e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l40alsupport_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l40alsupport_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l40alsupport_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l40alsupport_3</child>
+  </joint>
+  <link name="uav_uav_d5l40alsupport_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0275771645816 0.0275771646112 -0.00187628672609 0 0 0</pose>
+    <mass>0.00121022852914556</mass>
+    <inertia>
+     <ixx>1.26866121410272e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.26866121237832e-07</iyy>
+     <iyz>0</iyz>
+     <izz>3.6655356512452e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l40alsupport_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l40alsupport_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L40Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l40alsupport_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l40alsupport_4</child>
+  </joint>
+  <link name="uav_uav_d5l50alsupport_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0433012698408 0.0249999997947 -0.065877759962 0 0 0</pose>
+    <mass>0.00151369183254516</mass>
+    <inertia>
+     <ixx>2.47371657753336e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.4737165683571e-07</iyy>
+     <iyz>0</iyz>
+     <izz>4.58183568684333e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l50alsupport_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l50alsupport_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l50alsupport_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l50alsupport_1</child>
+  </joint>
+  <link name="uav_uav_d5l50alsupport_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.043301270055 0.0249999997946 -0.0658777594957 0 0 0</pose>
+    <mass>0.00151369229430489</mass>
+    <inertia>
+     <ixx>2.47371728677451e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.47371728910079e-07</iyy>
+     <iyz>0</iyz>
+     <izz>4.58183827750886e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l50alsupport_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l50alsupport_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l50alsupport_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l50alsupport_2</child>
+  </joint>
+  <link name="uav_uav_d5l50alsupport_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0433012698408 -0.0249999997964 -0.0658777599615 0 0 0</pose>
+    <mass>0.00151369183251264</mass>
+    <inertia>
+     <ixx>2.4737165773044e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.47371656818306e-07</iyy>
+     <iyz>0</iyz>
+     <izz>4.58183568670677e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l50alsupport_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l50alsupport_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l50alsupport_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l50alsupport_3</child>
+  </joint>
+  <link name="uav_uav_d5l50alsupport_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.043301270055 -0.0249999997965 -0.0658777594952 0 0 0</pose>
+    <mass>0.00151369229427237</mass>
+    <inertia>
+     <ixx>2.47371728654554e-07</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>2.47371728892674e-07</iyy>
+     <iyz>0</iyz>
+     <izz>4.58183827737229e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_d5l50alsupport_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_d5l50alsupport_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - D5L50Alsupport-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_d5l50alsupport_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_d5l50alsupport_4</child>
+  </joint>
+  <link name="uav_uav_motor_2807_1300kv_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.141421368225 0.14142114521 -0.0252901093736 0 0 0</pose>
+    <mass>0.0227723265485015</mass>
+    <inertia>
+     <ixx>2.09111992318613e-06</ixx>
+     <ixy>4.01442877617091e-13</ixy>
+     <ixz>-8.31934215211697e-13</ixz>
+     <iyy>2.09084304255331e-06</iyy>
+     <iyz>-5.72925675194012e-11</iyz>
+     <izz>2.65764110058857e-06</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_motor_2807_1300kv_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_motor_2807_1300kv_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_motor_2807_1300kv_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_motor_2807_1300kv_1</child>
+  </joint>
+  <link name="uav_uav_motor_2807_1300kv_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.14142114521 0.141421368225 -0.0252901093736 0 0 0</pose>
+    <mass>0.0227723265485015</mass>
+    <inertia>
+     <ixx>2.09084304255331e-06</ixx>
+     <ixy>-4.01442877749858e-13</ixy>
+     <ixz>-5.72925675197375e-11</ixz>
+     <iyy>2.09111992318613e-06</iyy>
+     <iyz>8.31934214973109e-13</iyz>
+     <izz>2.65764110058858e-06</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_motor_2807_1300kv_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_motor_2807_1300kv_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_motor_2807_1300kv_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_motor_2807_1300kv_2</child>
+  </joint>
+  <link name="uav_uav_motor_2807_1300kv_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.141421368225 -0.14142114521 -0.0252901093736 0 0 0</pose>
+    <mass>0.0227723265485015</mass>
+    <inertia>
+     <ixx>2.09111992318613e-06</ixx>
+     <ixy>4.01442877617091e-13</ixy>
+     <ixz>8.31934215211697e-13</ixz>
+     <iyy>2.09084304255331e-06</iyy>
+     <iyz>5.72925675194012e-11</iyz>
+     <izz>2.65764110058857e-06</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_motor_2807_1300kv_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_motor_2807_1300kv_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_motor_2807_1300kv_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_motor_2807_1300kv_3</child>
+  </joint>
+  <link name="uav_uav_motor_2807_1300kv_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.14142114521 -0.141421368225 -0.0252901093736 0 0 0</pose>
+    <mass>0.0227723265485015</mass>
+    <inertia>
+     <ixx>2.09084304255331e-06</ixx>
+     <ixy>-4.01442877749858e-13</ixy>
+     <ixz>5.72925675197375e-11</ixz>
+     <iyy>2.09111992318613e-06</iyy>
+     <iyz>-8.31934214973109e-13</iyz>
+     <izz>2.65764110058858e-06</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_motor_2807_1300kv_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_motor_2807_1300kv_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - Motor_2807_1300KV-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_motor_2807_1300kv_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_motor_2807_1300kv_4</child>
+  </joint>
+  <link name="uav_uav_n100pc_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-1.39978322823e-11 8.72711061684e-10 0.0423544869704 0 0 0</pose>
+    <mass>0.314955613758403</mass>
+    <inertia>
+     <ixx>0.000188058719612127</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.000187789451355657</iyy>
+     <iyz>0</iyz>
+     <izz>0.000271868794456422</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_n100pc_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - N100PC-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_n100pc_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - N100PC-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_n100pc_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_n100pc_1</child>
+  </joint>
+  <link name="uav_uav_pad_7nano_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0129999909379 0.0190000003836 -0.017869999947 0 0 0</pose>
+    <mass>0.00029425988411219</mass>
+    <inertia>
+     <ixx>1.82678682146648e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.82678893950635e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.00048064950059e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_pad_7nano_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_pad_7nano_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_pad_7nano_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_pad_7nano_1</child>
+  </joint>
+  <link name="uav_uav_pad_7nano_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0130000088169 0.0190000003836 -0.0178699999472 0 0 0</pose>
+    <mass>0.00029425988385222</mass>
+    <inertia>
+     <ixx>1.82678682228426e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.82678894006196e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.00048064923558e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_pad_7nano_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_pad_7nano_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_pad_7nano_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_pad_7nano_2</child>
+  </joint>
+  <link name="uav_uav_pad_7nano_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0130000088168 -0.0189999996343 -0.0178699999472 0 0 0</pose>
+    <mass>0.000294259873382737</mass>
+    <inertia>
+     <ixx>1.82678682375526e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.82678894083621e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.0004806064468e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_pad_7nano_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_pad_7nano_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_pad_7nano_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_pad_7nano_3</child>
+  </joint>
+  <link name="uav_uav_pad_7nano_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0129999909379 -0.0189999996342 -0.017869999947 0 0 0</pose>
+    <mass>0.000294259873642704</mass>
+    <inertia>
+     <ixx>1.82678682293748e-09</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>1.82678894028061e-09</iyy>
+     <iyz>0</iyz>
+     <izz>1.0004806067118e-09</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_pad_7nano_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_pad_7nano_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PAD_7NANO-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_pad_7nano_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_pad_7nano_4</child>
+  </joint>
+  <link name="uav_uav_pc_base_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>8.02938005486e-07 -5.58268059775e-09 0.0191319582115 0 0 0</pose>
+    <mass>0.0312355652270609</mass>
+    <inertia>
+     <ixx>1.20327280451536e-05</ixx>
+     <ixy>0</ixy>
+     <ixz>-1.5886121193786e-11</ixz>
+     <iyy>1.35283333073953e-05</iyy>
+     <iyz>0</iyz>
+     <izz>2.5545716675016e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_pc_base_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PC_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_pc_base_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - PC_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_pc_base_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_pc_base_1</child>
+  </joint>
+  <link name="uav_uav_prop_1">
+   <pose relative_to="rotor0">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.000021357854 -0.000021356616 0.0005300000541 0 0 0</pose>
+    <mass>0.0440588005965314</mass>
+    <inertia>
+     <ixx>0.000113365416136351</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.00011336541510741</iyy>
+     <iyz>0</iyz>
+     <izz>0.000226723488121599</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_prop_1_visual">
+    <pose>-0.1414 0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.08 0.08 0.08 1</ambient>
+     <diffuse>0.08 0.08 0.08 1</diffuse>
+     <specular>0.15 0.15 0.15 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_prop_1_collision">
+    <pose>-0.1414 0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="rotor_1_joint" type="revolute">
+   <parent>base_link</parent>
+   <child>uav_uav_prop_3</child>
+   <axis>
+    <xyz>0 0 1</xyz>
+    <limit>
+     <lower>-1e16</lower>
+     <upper>1e16</upper>
+    </limit>
+   </axis>
+  </joint>
+  <link name="uav_uav_prop_2">
+   <pose relative_to="rotor3">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.000021356616 -0.000021357854 0.0005300000541 0 0 0</pose>
+    <mass>0.0440588005965314</mass>
+    <inertia>
+     <ixx>0.00011336541510741</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.000113365416136351</iyy>
+     <iyz>0</iyz>
+     <izz>0.000226723488121599</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_prop_2_visual">
+    <pose>0.1414 0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.08 0.08 0.08 1</ambient>
+     <diffuse>0.08 0.08 0.08 1</diffuse>
+     <specular>0.15 0.15 0.15 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_prop_2_collision">
+    <pose>0.1414 0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="rotor_2_joint" type="revolute">
+   <parent>base_link</parent>
+   <child>uav_uav_prop_4</child>
+   <axis>
+    <xyz>0 0 1</xyz>
+    <limit>
+     <lower>-1e16</lower>
+     <upper>1e16</upper>
+    </limit>
+   </axis>
+  </joint>
+  <link name="uav_uav_prop_3">
+   <pose relative_to="rotor1">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.000021357854 0.000021356616 0.0005300000541 0 0 0</pose>
+    <mass>0.0440588005965314</mass>
+    <inertia>
+     <ixx>0.000113365416136351</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.00011336541510741</iyy>
+     <iyz>0</iyz>
+     <izz>0.000226723488121599</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_prop_3_visual">
+    <pose>0.1414 -0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.08 0.08 0.08 1</ambient>
+     <diffuse>0.08 0.08 0.08 1</diffuse>
+     <specular>0.15 0.15 0.15 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_prop_3_collision">
+    <pose>0.1414 -0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="rotor_3_joint" type="revolute">
+   <parent>base_link</parent>
+   <child>uav_uav_prop_2</child>
+   <axis>
+    <xyz>0 0 1</xyz>
+    <limit>
+     <lower>-1e16</lower>
+     <upper>1e16</upper>
+    </limit>
+   </axis>
+  </joint>
+  <link name="uav_uav_prop_4">
+   <pose relative_to="rotor2">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.000021356616 0.000021357854 0.0005300000541 0 0 0</pose>
+    <mass>0.0440588005965314</mass>
+    <inertia>
+     <ixx>0.00011336541510741</ixx>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyy>0.000113365416136351</iyy>
+     <iyz>0</iyz>
+     <izz>0.000226723488121599</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_prop_4_visual">
+    <pose>-0.1414 -0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.08 0.08 0.08 1</ambient>
+     <diffuse>0.08 0.08 0.08 1</diffuse>
+     <specular>0.15 0.15 0.15 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_prop_4_collision">
+    <pose>-0.1414 -0.1414 0.0152 0 0 0</pose>
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - prop-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="rotor_0_joint" type="revolute">
+   <parent>base_link</parent>
+   <child>uav_uav_prop_1</child>
+   <axis>
+    <xyz>0 0 1</xyz>
+    <limit>
+     <lower>-1e16</lower>
+     <upper>1e16</upper>
+    </limit>
+   </axis>
+  </joint>
+  <link name="uav_uav_uav_lower_arm_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0970043114631 -0.0970037304199 -0.0368705158529 0 0 0</pose>
+    <mass>0.0219656717392868</mass>
+    <inertia>
+     <ixx>3.29021341494631e-05</ixx>
+     <ixy>-3.00157713519436e-05</ixy>
+     <ixz>1.93337779101957e-10</ixz>
+     <iyy>3.29001493360186e-05</iyy>
+     <iyz>1.93344171504265e-10</iyz>
+     <izz>6.57904093628465e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_lower_arm_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_lower_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_lower_arm_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_lower_arm_1</child>
+  </joint>
+  <link name="uav_uav_uav_lower_arm_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.0970037304199 0.0970043114631 -0.0368705158529 0 0 0</pose>
+    <mass>0.0219656717392868</mass>
+    <inertia>
+     <ixx>3.29001493360187e-05</ixx>
+     <ixy>3.00157713519437e-05</ixy>
+     <ixz>1.93344171505363e-10</ixz>
+     <iyy>3.29021341494632e-05</iyy>
+     <iyz>-1.93337779101603e-10</iyz>
+     <izz>6.57904093628466e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_lower_arm_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_lower_arm_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_lower_arm_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_lower_arm_2</child>
+  </joint>
+  <link name="uav_uav_uav_lower_arm_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0970043114631 0.0970037304199 -0.0368705158529 0 0 0</pose>
+    <mass>0.0219656717392868</mass>
+    <inertia>
+     <ixx>3.29021341494631e-05</ixx>
+     <ixy>-3.00157713519436e-05</ixy>
+     <ixz>-1.93337779101015e-10</ixz>
+     <iyy>3.29001493360186e-05</iyy>
+     <iyz>-1.93344171504237e-10</iyz>
+     <izz>6.57904093628465e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_lower_arm_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_lower_arm_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_lower_arm_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_lower_arm_3</child>
+  </joint>
+  <link name="uav_uav_uav_lower_arm_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.0970037304199 -0.0970043114631 -0.0368705158529 0 0 0</pose>
+    <mass>0.0219656717392868</mass>
+    <inertia>
+     <ixx>3.29001493360187e-05</ixx>
+     <ixy>3.00157713519437e-05</ixy>
+     <ixz>-1.93344171505363e-10</ixz>
+     <iyy>3.29021341494632e-05</iyy>
+     <iyz>1.93337779101603e-10</iyz>
+     <izz>6.57904093628466e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_lower_arm_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_lower_arm_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_lower_arm_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_lower_arm_4</child>
+  </joint>
+  <link name="uav_uav_uav_lower_board_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-7.2674376152e-07 8.06209814925e-07 -0.0393704152533 0 0 0</pose>
+    <mass>0.0845773734562853</mass>
+    <inertia>
+     <ixx>9.15474762123921e-05</ixx>
+     <ixy>7.42291428987376e-10</ixy>
+     <ixz>-2.98615264953678e-11</ixz>
+     <iyy>9.28781746569015e-05</iyy>
+     <iyz>2.22933083926652e-11</iyz>
+     <izz>0.000184330534421371</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_lower_board_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_board-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_lower_board_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Lower_board-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_lower_board_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_lower_board_1</child>
+  </joint>
+  <link name="uav_uav_uav_upper_arm_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.10172091002 -0.101721641219 -0.0248696375477 0 0 0</pose>
+    <mass>0.0228902942577658</mass>
+    <inertia>
+     <ixx>3.53528017437593e-05</ixx>
+     <ixy>3.21008897979801e-05</ixy>
+     <ixz>2.92773839701265e-10</ixz>
+     <iyy>3.5354929911955e-05</iyy>
+     <iyz>-2.92764134954635e-10</iyz>
+     <izz>7.06960490991797e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_upper_arm_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_upper_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_upper_arm_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_upper_arm_1</child>
+  </joint>
+  <link name="uav_uav_uav_upper_arm_2">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.101721641219 -0.10172091002 -0.0248696375477 0 0 0</pose>
+    <mass>0.0228902942577658</mass>
+    <inertia>
+     <ixx>3.53549299119549e-05</ixx>
+     <ixy>-3.210088979798e-05</ixy>
+     <ixz>-2.92764134947654e-10</ixz>
+     <iyy>3.53528017437592e-05</iyy>
+     <iyz>-2.927738396886e-10</iyz>
+     <izz>7.06960490991795e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_upper_arm_2_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_upper_arm_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_upper_arm_2" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_upper_arm_2</child>
+  </joint>
+  <link name="uav_uav_uav_upper_arm_3">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-0.10172091002 0.101721641219 -0.0248696375477 0 0 0</pose>
+    <mass>0.0228902942577658</mass>
+    <inertia>
+     <ixx>3.53528017437593e-05</ixx>
+     <ixy>3.21008897979801e-05</ixy>
+     <ixz>-2.92773839697341e-10</ixz>
+     <iyy>3.5354929911955e-05</iyy>
+     <iyz>2.92764134954635e-10</iyz>
+     <izz>7.06960490991797e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_upper_arm_3_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_upper_arm_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-3.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_upper_arm_3" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_upper_arm_3</child>
+  </joint>
+  <link name="uav_uav_uav_upper_arm_4">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>0.101721641219 0.10172091002 -0.0248696375477 0 0 0</pose>
+    <mass>0.0228902942577658</mass>
+    <inertia>
+     <ixx>3.53549299119549e-05</ixx>
+     <ixy>-3.210088979798e-05</ixy>
+     <ixz>2.92764134947654e-10</ixz>
+     <iyy>3.53528017437592e-05</iyy>
+     <iyz>2.927738396886e-10</iyz>
+     <izz>7.06960490991795e-05</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_upper_arm_4_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_upper_arm_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_upper_arm_4" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_upper_arm_4</child>
+  </joint>
+  <link name="uav_uav_uav_upper_board_1">
+   <pose relative_to="base_link">0 0 0 0 0 0</pose>
+   <inertial>
+    <pose>-2.78833256984e-06 -8.66097732152e-07 -0.0228696993697 0 0 0</pose>
+    <mass>0.0619320200795372</mass>
+    <inertia>
+     <ixx>6.92426896990994e-05</ixx>
+     <ixy>5.83270193587505e-10</ixy>
+     <ixz>-7.50925858865489e-21</ixz>
+     <iyy>6.60632491593307e-05</iyy>
+     <iyz>0</iyz>
+     <izz>0.00013527477672678</izz>
+    </inertia>
+   </inertial>
+   <visual name="uav_uav_uav_upper_board_1_visual">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_board-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.75 0.75 0.78 1</ambient>
+     <diffuse>0.75 0.75 0.78 1</diffuse>
+     <specular>0.3 0.3 0.3 1</specular>
+    </material>
+   </visual>
+   <collision name="uav_uav_uav_upper_board_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/UAV - UAV_Upper_board-1.STL</uri>
+     </mesh>
+    </geometry>
+   <surface><contact><collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask></contact></surface>
+   </collision>
+  </link>
+  <joint name="uav_fixed_uav_uav_uav_upper_board_1" type="fixed">
+   <parent>base_link</parent>
+   <child>uav_uav_uav_upper_board_1</child>
+  </joint>
+  <link name="delta_base">
+   <pose>0.0 0.0 0 0.0 0.0 0.0</pose>
+   <inertial>
+    <mass>0.185</mass>
+    <inertia>
+     <ixx>0.00034918048</ixx>
+     <iyy>0.00029834978</iyy>
+     <izz>0.00061978027</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta_base_board_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_board-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.68 0.70 0.74 1</ambient>
+     <diffuse>0.68 0.70 0.74 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_base_board_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_board-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.68 0.70 0.74 1</ambient>
+     <diffuse>0.68 0.70 0.74 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_base_motor_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.68 0.70 0.74 1</ambient>
+     <diffuse>0.68 0.70 0.74 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_base_motor_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.68 0.70 0.74 1</ambient>
+     <diffuse>0.68 0.70 0.74 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_base_motor_3">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.68 0.70 0.74 1</ambient>
+     <diffuse>0.68 0.70 0.74 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta_base_board_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_board-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_base_board_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_board-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_base_motor_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_base_motor_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_base_motor_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Base-1 Delta_motor-3.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_elbow_2_mount">
+   <pose>0.0 0.0 0 0.0 0.0 2.0943951023931953</pose>
+   <inertial>
+    <mass>0.001</mass>
+    <inertia>
+     <ixx>1e-06</ixx>
+     <iyy>1e-06</iyy>
+     <izz>1e-06</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+  </link>
+  <link name="delta_elbow_2">
+   <pose>-0.037249999999999985 0.06451889258194068 0 0.0 0.0 2.0943951023931953</pose>
+   <inertial>
+    <mass>0.053</mass>
+    <inertia>
+     <ixx>1.1399417e-05</ixx>
+     <iyy>2.2637497e-05</iyy>
+     <izz>2.6086914e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta2_elbow_connector_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta2_frame_base_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta2_upper_arm_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta2_balljoint_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta2_balljoint_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta2_motor_frame_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta2_elbow_connector_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta2_frame_base_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta2_upper_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta2_balljoint_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta2_balljoint_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta2_motor_frame_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-2 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta2_lower_arm_4">
+   <pose>-0.06456013442084767 0.16422143296038455 0 0.0 0.0 2.0943951023931953</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3118873e-05</ixx>
+     <iyy>9.2996631e-05</iyy>
+     <izz>5.3627757e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta2_lower_arm_4">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta2_lower_arm_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-4.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta2_lower_arm_5">
+   <pose>-0.10993986557915225 0.13802143296038455 0 0.0 0.0 2.0943951023931953</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3172912e-05</ixx>
+     <iyy>9.2998292e-05</iyy>
+     <izz>5.357538e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta2_lower_arm_5">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-5.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta2_lower_arm_5_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-5.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_elbow_1_mount">
+   <pose>0.0 0.0 0 0.0 0.0 -2.0943951023931953</pose>
+   <inertial>
+    <mass>0.001</mass>
+    <inertia>
+     <ixx>1e-06</ixx>
+     <iyy>1e-06</iyy>
+     <izz>1e-06</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+  </link>
+  <link name="delta_elbow_1">
+   <pose>-0.037249999999999985 -0.06451889258194068 0 0.0 0.0 -2.0943951023931953</pose>
+   <inertial>
+    <mass>0.053</mass>
+    <inertia>
+     <ixx>1.1399417e-05</ixx>
+     <iyy>2.2637497e-05</iyy>
+     <izz>2.6086914e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta1_elbow_connector_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta1_frame_base_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta1_upper_arm_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta1_balljoint_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta1_balljoint_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta1_motor_frame_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta1_elbow_connector_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta1_frame_base_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta1_upper_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta1_balljoint_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta1_balljoint_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta1_motor_frame_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-1 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta1_lower_arm_2">
+   <pose>-0.10993986557915225 -0.13802143296038455 0 0.0 0.0 -2.0943951023931953</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3172918e-05</ixx>
+     <iyy>9.2998294e-05</iyy>
+     <izz>5.3575377e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta1_lower_arm_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta1_lower_arm_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta1_lower_arm_1">
+   <pose>-0.06456013442084767 -0.16422143296038455 0 0.0 0.0 -2.0943951023931953</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3172912e-05</ixx>
+     <iyy>9.2998292e-05</iyy>
+     <izz>5.357538e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta1_lower_arm_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta1_lower_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_elbow_3">
+   <pose>0.0745 0.0 0 0.0 0.0 0.0</pose>
+   <inertial>
+    <mass>0.053</mass>
+    <inertia>
+     <ixx>1.1399417e-05</ixx>
+     <iyy>2.2637497e-05</iyy>
+     <izz>2.6086914e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta_elbow_connector_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_elbow_frame_base_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_upper_arm_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_elbow_balljoint_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_elbow_balljoint_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_motor_frame_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.45 0.58 0.82 1</ambient>
+     <diffuse>0.45 0.58 0.82 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta_elbow_connector_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Elbow_connector-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_elbow_frame_base_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Frame_Base-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_upper_arm_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_Upper_Arm-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_elbow_balljoint_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_elbow_balljoint_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_motor_frame_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Elbow-3 Delta_motor_frame-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_lower_arm_6">
+   <pose>0.1745 -0.0262 0 0.0 0.0 0.0</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3172918e-05</ixx>
+     <iyy>9.2998294e-05</iyy>
+     <izz>5.3575377e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta_lower_arm_6">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-6.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta_lower_arm_6_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-6.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_end_platform">
+   <sensor name="platform_contact_sensor" type="contact">
+    <contact><collision>delta_end_platform_load_bearing_collision</collision><topic>/mujoco_uav_delta/platform_contacts</topic></contact>
+    <always_on>true</always_on><update_rate>1000</update_rate>
+   </sensor>
+   <pose>0.024999999999999994 -0.0262 -0.1328 0.0 0.0 0.0</pose>
+   <inertial>
+    <mass>0.056</mass>
+    <inertia>
+     <ixx>2.8801603e-05</ixx>
+     <iyy>2.286664e-05</iyy>
+     <izz>4.3268243e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta_end_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_End-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_1">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_2">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_3">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-3.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_4">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-4.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_5">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-5.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <visual name="delta_end_balljoint_6">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-6.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.95 0.55 0.18 1</ambient>
+     <diffuse>0.95 0.55 0.18 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta_end_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_End-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_1_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-1.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_2_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-2.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_3_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-3.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_4_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-4.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_5_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-5.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_balljoint_6_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_End_platform-1 Delta_balljoint-6.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+   <collision name="delta_end_platform_load_bearing_collision">
+    <pose>-0.0256228 0.0261815 -0.000000005 0 0 0</pose>
+    <geometry>
+     <box>
+      <size>0.0632455 0.0726070 0.0080000</size>
+     </box>
+    </geometry>
+    <surface>
+     <friction>
+      <ode>
+       <mu>1.0</mu>
+       <mu2>1.0</mu2>
+      </ode>
+     </friction>
+     <contact>
+      <collide_bitmask>65535</collide_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <link name="delta_lower_arm_5">
+   <pose>0.1745 0.0262 0 0.0 0.0 0.0</pose>
+   <inertial>
+    <mass>0.025</mass>
+    <inertia>
+     <ixx>4.3172912e-05</ixx>
+     <iyy>9.2998292e-05</iyy>
+     <izz>5.357538e-05</izz>
+     <ixy>0</ixy>
+     <ixz>0</ixz>
+     <iyz>0</iyz>
+    </inertia>
+   </inertial>
+   <visual name="delta_lower_arm_5">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-5.STL</uri>
+     </mesh>
+    </geometry>
+    <material>
+     <ambient>0.18 0.82 0.32 1</ambient>
+     <diffuse>0.18 0.82 0.32 1</diffuse>
+    </material>
+   </visual>
+   <collision name="delta_lower_arm_5_collision">
+    <geometry>
+     <mesh>
+      <uri>model://mujoco_uav_delta/meshes/Delta_Manipulator - Delta_Lower_Arm-5.STL</uri>
+     </mesh>
+    </geometry>
+    <surface>
+     <contact>
+      <collide_bitmask>0</collide_bitmask><category_bitmask>0</category_bitmask>
+     </contact>
+    </surface>
+   </collision>
+  </link>
+  <joint name="fixed_delta_base_to_delta_elbow_2_mount" type="fixed">
+   <parent>delta_base</parent>
+   <child>delta_elbow_2_mount</child>
+   <pose relative_to="__model__">0.0 0.0 0 0 0 0</pose>
+  </joint>
+  <joint name="delta_elbow_2_hinge" type="revolute">
+   <parent>delta_elbow_2_mount</parent>
+   <child>delta_elbow_2</child>
+   <pose relative_to="delta_elbow_2_mount">0.0745 0.0 0 0 0 0</pose>
+   <axis>
+    <xyz>0 -1 0</xyz>
+    <limit>
+     <lower>-1.5707963267948966</lower>
+     <upper>0.5235987755982988</upper>
+    </limit>
+    <dynamics>
+     <damping>0.01</damping>
+    </dynamics>
+   </axis>
+  </joint>
+  <joint name="delta2_lower_arm_4_ball" type="ball">
+   <parent>delta_elbow_2</parent>
+   <child>delta2_lower_arm_4</child>
+   <pose relative_to="__model__">-0.0645601344 0.1642214330 0 0 0 0</pose>
+  </joint>
+  <joint name="delta2_lower_arm_5_ball" type="ball">
+   <parent>delta_elbow_2</parent>
+   <child>delta2_lower_arm_5</child>
+   <pose relative_to="__model__">-0.1099398656 0.1380214330 0 0 0 0</pose>
+  </joint>
+  <joint name="fixed_delta_base_to_delta_elbow_1_mount" type="fixed">
+   <parent>delta_base</parent>
+   <child>delta_elbow_1_mount</child>
+   <pose relative_to="__model__">0.0 0.0 0 0 0 0</pose>
+  </joint>
+  <joint name="delta_elbow_1_hinge" type="revolute">
+   <parent>delta_elbow_1_mount</parent>
+   <child>delta_elbow_1</child>
+   <pose relative_to="delta_elbow_1_mount">0.0745 0.0 0 0 0 0</pose>
+   <axis>
+    <xyz>0 -1 0</xyz>
+    <limit>
+     <lower>-1.5707963267948966</lower>
+     <upper>0.5235987755982988</upper>
+    </limit>
+    <dynamics>
+     <damping>0.01</damping>
+    </dynamics>
+   </axis>
+  </joint>
+  <joint name="delta1_lower_arm_2_ball" type="ball">
+   <parent>delta_elbow_1</parent>
+   <child>delta1_lower_arm_2</child>
+   <pose relative_to="__model__">-0.1099398656 -0.1380214330 0 0 0 0</pose>
+  </joint>
+  <joint name="delta1_lower_arm_1_ball" type="ball">
+   <parent>delta_elbow_1</parent>
+   <child>delta1_lower_arm_1</child>
+   <pose relative_to="__model__">-0.0645601344 -0.1642214330 0 0 0 0</pose>
+  </joint>
+  <joint name="delta_elbow_3_hinge" type="revolute">
+   <parent>delta_base</parent>
+   <child>delta_elbow_3</child>
+   <pose relative_to="delta_base">0.0745 0.0 0 0 0 0</pose>
+   <axis>
+    <xyz>0 -1 0</xyz>
+    <limit>
+     <lower>-1.5707963267948966</lower>
+     <upper>0.5235987755982988</upper>
+    </limit>
+    <dynamics>
+     <damping>0.01</damping>
+    </dynamics>
+   </axis>
+  </joint>
+  <joint name="delta_lower_arm_6_ball" type="ball">
+   <parent>delta_elbow_3</parent>
+   <child>delta_lower_arm_6</child>
+   <pose relative_to="__model__">0.1745 -0.0262 0 0 0 0</pose>
+  </joint>
+  <joint name="delta_lower_arm_5_ball" type="ball">
+   <parent>delta_elbow_3</parent>
+   <child>delta_lower_arm_5</child>
+   <pose relative_to="__model__">0.1745 0.0262 0 0 0 0</pose>
+  </joint>
+  <joint name="delta_end_platform_ball" type="ball">
+   <parent>delta_lower_arm_6</parent>
+   <child>delta_end_platform</child>
+   <pose relative_to="__model__">0.025 -0.0262 -0.1328 0 0 0</pose>
+  </joint>
+  <frame name="c1_anchor">
+   <pose relative_to="__model__">0.025 0.0262 -0.1328 0 0 0</pose>
+  </frame>
+  <link name="c1_dummy">
+   <pose relative_to="c1_anchor">0 0 0 0 0 0</pose>
+   <inertial>
+    <mass>0.004</mass>
+    <inertia>
+     <ixx>4e-6</ixx>
+     <iyy>4e-6</iyy>
+     <izz>4e-6</izz>
+    </inertia>
+   </inertial>
+  </link>
+  <joint name="c1_ball" type="ball">
+   <parent>delta_lower_arm_5</parent>
+   <child>c1_dummy</child>
+   <pose relative_to="c1_anchor">0 0 0 0 0 0</pose>
+  </joint>
+  <plugin filename="libgz-sim-detachable-joint-system.so" name="gz::sim::systems::DetachableJoint">
+   <parent_link>c1_dummy</parent_link>
+   <child_model>__model__</child_model>
+   <child_link>delta_end_platform</child_link>
+  </plugin>
+  <frame name="c2_anchor">
+   <pose relative_to="__model__">0.0102 0.0347 -0.1328 0 0 0</pose>
+  </frame>
+  <link name="c2_dummy">
+   <pose relative_to="c2_anchor">0 0 0 0 0 0</pose>
+   <inertial>
+    <mass>0.004</mass>
+    <inertia>
+     <ixx>4e-6</ixx>
+     <iyy>4e-6</iyy>
+     <izz>4e-6</izz>
+    </inertia>
+   </inertial>
+  </link>
+  <joint name="c2_ball" type="ball">
+   <parent>delta2_lower_arm_4</parent>
+   <child>c2_dummy</child>
+   <pose relative_to="c2_anchor">0 0 0 0 0 0</pose>
+  </joint>
+  <plugin filename="libgz-sim-detachable-joint-system.so" name="gz::sim::systems::DetachableJoint">
+   <parent_link>c2_dummy</parent_link>
+   <child_model>__model__</child_model>
+   <child_link>delta_end_platform</child_link>
+  </plugin>
+  <frame name="c3_anchor">
+   <pose relative_to="__model__">-0.0351 0.0085 -0.1328 0 0 0</pose>
+  </frame>
+  <link name="c3_dummy">
+   <pose relative_to="c3_anchor">0 0 0 0 0 0</pose>
+   <inertial>
+    <mass>0.004</mass>
+    <inertia>
+     <ixx>4e-6</ixx>
+     <iyy>4e-6</iyy>
+     <izz>4e-6</izz>
+    </inertia>
+   </inertial>
+  </link>
+  <joint name="c3_ball" type="ball">
+   <parent>delta2_lower_arm_5</parent>
+   <child>c3_dummy</child>
+   <pose relative_to="c3_anchor">0 0 0 0 0 0</pose>
+  </joint>
+  <plugin filename="libgz-sim-detachable-joint-system.so" name="gz::sim::systems::DetachableJoint">
+   <parent_link>c3_dummy</parent_link>
+   <child_model>__model__</child_model>
+   <child_link>delta_end_platform</child_link>
+  </plugin>
+  <frame name="c4_anchor">
+   <pose relative_to="__model__">-0.0351 -0.0085 -0.1328 0 0 0</pose>
+  </frame>
+  <link name="c4_dummy">
+   <pose relative_to="c4_anchor">0 0 0 0 0 0</pose>
+   <inertial>
+    <mass>0.004</mass>
+    <inertia>
+     <ixx>4e-6</ixx>
+     <iyy>4e-6</iyy>
+     <izz>4e-6</izz>
+    </inertia>
+   </inertial>
+  </link>
+  <joint name="c4_ball" type="ball">
+   <parent>delta1_lower_arm_2</parent>
+   <child>c4_dummy</child>
+   <pose relative_to="c4_anchor">0 0 0 0 0 0</pose>
+  </joint>
+  <plugin filename="libgz-sim-detachable-joint-system.so" name="gz::sim::systems::DetachableJoint">
+   <parent_link>c4_dummy</parent_link>
+   <child_model>__model__</child_model>
+   <child_link>delta_end_platform</child_link>
+  </plugin>
+  <frame name="c5_anchor">
+   <pose relative_to="__model__">0.0102 -0.0347 -0.1328 0 0 0</pose>
+  </frame>
+  <link name="c5_dummy">
+   <pose relative_to="c5_anchor">0 0 0 0 0 0</pose>
+   <inertial>
+    <mass>0.004</mass>
+    <inertia>
+     <ixx>4e-6</ixx>
+     <iyy>4e-6</iyy>
+     <izz>4e-6</izz>
+    </inertia>
+   </inertial>
+  </link>
+  <joint name="c5_ball" type="ball">
+   <parent>delta1_lower_arm_1</parent>
+   <child>c5_dummy</child>
+   <pose relative_to="c5_anchor">0 0 0 0 0 0</pose>
+  </joint>
+  <plugin filename="libgz-sim-detachable-joint-system.so" name="gz::sim::systems::DetachableJoint">
+   <parent_link>c5_dummy</parent_link>
+   <child_model>__model__</child_model>
+   <child_link>delta_end_platform</child_link>
+  </plugin>
+  <plugin filename="libgz-sim-joint-position-controller-system.so" name="gz::sim::systems::JointPositionController">
+   <joint_name>delta_elbow_1_hinge</joint_name>
+   <initial_position>0</initial_position>
+   <i_gain>0</i_gain>
+   <topic>/mujoco_uav_delta/delta_elbow_1_hinge/cmd_pos</topic>
+   <p_gain>20</p_gain>
+   <d_gain>0.5</d_gain>
+   <cmd_max>1000</cmd_max>
+   <cmd_min>-1000</cmd_min>
+  </plugin>
+  <plugin filename="libgz-sim-joint-position-controller-system.so" name="gz::sim::systems::JointPositionController">
+   <joint_name>delta_elbow_2_hinge</joint_name>
+   <initial_position>0</initial_position>
+   <i_gain>0</i_gain>
+   <topic>/mujoco_uav_delta/delta_elbow_2_hinge/cmd_pos</topic>
+   <p_gain>20</p_gain>
+   <d_gain>0.5</d_gain>
+   <cmd_max>1000</cmd_max>
+   <cmd_min>-1000</cmd_min>
+  </plugin>
+  <plugin filename="libgz-sim-joint-position-controller-system.so" name="gz::sim::systems::JointPositionController">
+   <joint_name>delta_elbow_3_hinge</joint_name>
+   <initial_position>0</initial_position>
+   <i_gain>0</i_gain>
+   <topic>/mujoco_uav_delta/delta_elbow_3_hinge/cmd_pos</topic>
+   <p_gain>20</p_gain>
+   <d_gain>0.5</d_gain>
+   <cmd_max>1000</cmd_max>
+   <cmd_min>-1000</cmd_min>
+  </plugin>
+  <plugin filename="libgz-sim-joint-state-publisher-system.so" name="gz::sim::systems::JointStatePublisher" />
+  <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+   <dimensions>3</dimensions>
+  </plugin>
+ </model>
+</sdf>
